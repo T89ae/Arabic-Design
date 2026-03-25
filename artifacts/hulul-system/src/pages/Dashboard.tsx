@@ -172,7 +172,7 @@ export default function Dashboard() {
     <AppLayout title="لوحة التحكم">
 
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+      <div className="flex flex-wrap items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
         <div>
           <h1 className="text-2xl font-black text-foreground tracking-tight">حلول للخدمات العامة</h1>
           <p className="text-sm text-muted-foreground mt-0.5">لوحة التحكم · نظرة عامة على أعمالك</p>
@@ -218,7 +218,7 @@ export default function Dashboard() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
         {kpis.map((kpi, i) => (
           <div
             key={i}

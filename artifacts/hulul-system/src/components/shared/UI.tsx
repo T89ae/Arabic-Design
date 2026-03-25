@@ -29,11 +29,11 @@ const COLOR_MAP: Record<string, string> = {
 
 export function KpiRow({ items }: { items: { label: string; value: string | number; color?: string }[] }) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
       {items.map((k, i) => (
-        <div key={i} className={clsx("bg-white rounded-2xl p-4 shadow-sm", COLOR_MAP[k.color || "muted"])}>
-          <p className="text-xs text-muted-foreground mb-1">{k.label}</p>
-          <p className="text-lg font-black text-foreground">{k.value}</p>
+        <div key={i} className={clsx("bg-white rounded-2xl p-3 sm:p-4 shadow-sm", COLOR_MAP[k.color || "muted"])}>
+          <p className="text-xs text-muted-foreground mb-1 leading-tight">{k.label}</p>
+          <p className="text-base sm:text-lg font-black text-foreground leading-tight">{k.value}</p>
         </div>
       ))}
     </div>
@@ -45,19 +45,6 @@ export function TableWrap({ children }: { children: ReactNode }) {
   return (
     <div className="bg-white rounded-3xl shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
-        <style>{`
-          table { width: 100%; border-collapse: collapse; }
-          thead tr { background: #f8fafc; }
-          th { padding: 12px 16px; font-size: 12px; font-weight: 700; color: #64748b; text-align: right; white-space: nowrap; }
-          td { padding: 12px 16px; font-size: 13px; color: #1e293b; border-top: 1px solid #f1f5f9; }
-          tr:hover td { background: #fafafa; }
-          .icon-btn { padding: 4px; border-radius: 8px; transition: background .15s; }
-          .icon-btn:hover { background: #f1f5f9; }
-          .input { border: 1px solid #e2e8f0; border-radius: 12px; padding: 8px 12px; font-family: inherit; width: 100%; font-size: 13px; outline: none; transition: border .15s; background: #fff; }
-          .input:focus { border-color: #0A2342; }
-          .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-          @media (max-width: 480px) { .form-grid { grid-template-columns: 1fr; } }
-        `}</style>
         {children}
       </div>
     </div>
@@ -68,8 +55,8 @@ export function TableWrap({ children }: { children: ReactNode }) {
 export function Modal({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: ReactNode }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-sm">
+      <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-lg max-h-[92vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
           <h3 className="text-base font-black text-foreground">{title}</h3>
           <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-400 text-lg font-bold transition-colors">×</button>
