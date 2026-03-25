@@ -1,0 +1,19 @@
+packages:
+  "recharts": "For rendering beautiful analytics charts in the Reports and Dashboard sections"
+  "date-fns": "For formatting and manipulating dates consistently"
+  "framer-motion": "For page transitions, modal animations, and smooth UI interactions"
+  "uuid": "For generating unique IDs for local storage data"
+  "clsx": "Utility for constructing className strings conditionally"
+  "tailwind-merge": "Utility to efficiently merge Tailwind CSS classes"
+  "lucide-react": "Beautiful, consistent icons for the application UI"
+
+images:
+  - path: "artifacts/hulul-system/public/images/auth-bg.png"
+    description: "Abstract modern geometric background in deep navy blue and apricot orange, elegant professional corporate style, subtle gradients"
+    aspect_ratio: "16:9"
+
+notes:
+  - App is a purely frontend system using localStorage for data persistence
+  - RTL (Right-to-Left) direction is enforced globally for Arabic content
+  - Replaced standard generic fonts with 'Cairo' Google Font for authentic Arabic typography
+  - TanStack Query is used with custom localStorage fetchers instead of REST APIs
