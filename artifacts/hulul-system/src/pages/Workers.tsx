@@ -102,10 +102,13 @@ function AddWorkerDialog() {
     createMutation.mutate({
       name: formData.get('name') as string,
       nationality: formData.get('nationality') as string,
+      sponsor: formData.get('sponsor') as string || '',
       profession: formData.get('profession') as string,
       phone: formData.get('phone') as string,
       status: 'active',
       iqamaExpiry: formData.get('iqamaExpiry') as string,
+      passportExpiry: formData.get('passportExpiry') as string || '',
+      notes: '',
     }, {
       onSuccess: () => setOpen(false)
     });

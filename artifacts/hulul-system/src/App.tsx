@@ -3,19 +3,26 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-// Pages
-import Dashboard from "@/pages/Dashboard";
-import Workers from "@/pages/Workers";
-import Transfers from "@/pages/Transfers";
-import Tasks from "@/pages/Tasks";
-import Finance from "@/pages/Finance";
-import Reports from "@/pages/Reports";
-import NotFound from "@/pages/not-found";
+import Dashboard     from "@/pages/Dashboard";
+import Workers       from "@/pages/Workers";
+import Transfers     from "@/pages/Transfers";
+import Tasks         from "@/pages/Tasks";
+import Finance       from "@/pages/Finance";
+import Reports       from "@/pages/Reports";
+import Expenses      from "@/pages/Expenses";
+import Sales         from "@/pages/Sales";
+import Inventory     from "@/pages/Inventory";
+import Contacts      from "@/pages/Contacts";
+import Brokers       from "@/pages/Brokers";
+import Attendance    from "@/pages/Attendance";
+import SaudiWorkers  from "@/pages/SaudiWorkers";
+import ActivityLog   from "@/pages/ActivityLog";
+import NotFound      from "@/pages/not-found";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: Infinity, // since it's local storage, don't refetch on window focus
+      staleTime: Infinity,
       retry: false,
     }
   }
@@ -24,15 +31,21 @@ const queryClient = new QueryClient({
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Dashboard} />
-      <Route path="/workers" component={Workers} />
-      <Route path="/transfers" component={Transfers} />
-      <Route path="/tasks" component={Tasks} />
-      <Route path="/finance" component={Finance} />
-      <Route path="/reports" component={Reports} />
-      {/* Fallbacks for un-implemented pages pointing to Dashboard for completeness */}
-      <Route path="/attendance" component={Dashboard} />
-      <Route path="/settings" component={Dashboard} />
+      <Route path="/"              component={Dashboard} />
+      <Route path="/workers"       component={Workers} />
+      <Route path="/transfers"     component={Transfers} />
+      <Route path="/tasks"         component={Tasks} />
+      <Route path="/finance"       component={Finance} />
+      <Route path="/reports"       component={Reports} />
+      <Route path="/expenses"      component={Expenses} />
+      <Route path="/sales"         component={Sales} />
+      <Route path="/inventory"     component={Inventory} />
+      <Route path="/contacts"      component={Contacts} />
+      <Route path="/brokers"       component={Brokers} />
+      <Route path="/attendance"    component={Attendance} />
+      <Route path="/saudi-workers" component={SaudiWorkers} />
+      <Route path="/activity"      component={ActivityLog} />
+      <Route path="/settings"      component={Dashboard} />
       <Route component={NotFound} />
     </Switch>
   );
