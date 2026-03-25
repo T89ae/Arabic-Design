@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حلول للخدمات العامة - لوحة التحكم</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts: Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            padding: 24px;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* الهيدر */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo-area h1 {
+            font-size: 1.8rem;
+            color: #1e293b;
+            font-weight: 800;
+        }
+
+        .logo-area p {
+            color: #475569;
+            font-size: 0.9rem;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .date-badge {
+            background: white;
+            padding: 8px 20px;
+            border-radius: 40px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            font-weight: 500;
+            color: #0f172a;
+        }
+
+        /* أزرار التحكم */
+        .control-btn {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-btn:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+            transform: translateY(-1px);
+        }
+
+        .control-btn.primary {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        .control-btn.primary:hover {
+            background: #2563eb;
+        }
+
+        .auto-update-indicator {
+            background: #f1f5f9;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .countdown {
+            font-weight: 700;
+            color: #3b82f6;
+            font-size: 1rem;
+            min-width: 45px;
+            display: inline-block;
+        }
+
+        /* بطاقات الإحصائيات */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 24px;
+            padding: 20px 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+            border: 1px solid #e9eef3;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card.updating {
+            background: #fefce8;
+            border-color: #fde047;
+            transition: 0.1s;
+        }
+
+        .stat-info h3 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #5b6e8c;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        .stat-number {
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.2;
+        }
+
+        .stat-icon {
+            font-size: 2.4rem;
+            color: #cbd5e1;
+        }
+
+        /* الرسوم البيانية */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 28px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border: 1px solid #eef2f6;
+        }
+
+        .chart-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 18px;
+            color: #1e293b;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        canvas {
+            max-height: 260px;
+            width: 100% !important;
+        }
+
+        /* المهام */
+        .tasks-section {
+            background: white;
+            border-radius: 28px;
+            padding: 20px;
+            border: 1px solid #eef2f6;
+        }
+
+        .tasks-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tasks-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #cbd5e1;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #2c3e66;
+        }
+
+        .btn-outline:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .task-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .task-badge {
+            width: 8px;
+            height: 8px;
+            border-radius: 10px;
+        }
+
+        .task-title {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .task-date {
+            font-size: 0.75rem;
+            color: #7c8ba0;
+        }
+
+        .task-status {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 40px;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #94a3b8;
+            padding: 32px;
+        }
+
+        /* Toast إشعار */
+        .toast-notification {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            background: #1e293b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 48px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            animation: slideUp 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 800px) {
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 500px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .header-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- الهيدر مع أزرار التحكم -->
+    <div class="header">
+        <div class="logo-area">
+            <h1>حلول للخدمات العامة</h1>
+            <p>لوحة التحكم · نظرة عامة على أعمالك</p>
+        </div>
+        <div class="header-controls">
+            <div class="auto-update-indicator">
+                <i class="fas fa-sync-alt" id="autoUpdateIcon"></i>
+                <span>تحديث تلقائي بعد</span>
+                <span class="countdown" id="countdownTimer">30</span>
+                <span>ثانية</span>
+            </div>
+            <button class="control-btn" id="manualUpdateBtn">
+                <i class="fas fa-rotate-right"></i>
+                تحديث يدوي
+            </button>
+            <button class="control-btn primary" id="toggleAutoUpdateBtn">
+                <i class="fas fa-pause" id="autoUpdateBtnIcon"></i>
+                <span id="autoUpdateBtnText">إيقاف التحديث التلقائي</span>
+            </button>
+            <div class="date-badge" id="currentDate"></div>
+        </div>
+    </div>
+
+    <!-- البطاقات الإحصائية -->
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <!-- الرسوم البيانية -->
+    <div class="charts-row">
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-line" style="color:#3b82f6;"></i> الإيرادات والمصروفات</h3>
+            <canvas id="revenueExpenseChart" width="400" height="250"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-pie" style="color:#10b981;"></i> توزيع النفقات</h3>
+            <canvas id="expenseDistributionChart" width="400" height="250"></canvas>
+        </div>
+    </div>
+
+    <!-- آخر المهام -->
+    <div class="tasks-section">
+        <div class="tasks-header">
+            <h3><i class="fas fa-tasks"></i> آخر المهام</h3>
+            <button class="btn-outline" id="openLogBtn">فتح سجل <i class="fas fa-arrow-left"></i></button>
+        </div>
+        <div id="tasksListContainer" class="tasks-list"></div>
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // البيانات الأولية
+    // --------------------------------------------------------------
+    let dashboardData = {
+        totalWorkers: 12,
+        currentBalance: 15480.75,
+        totalSales: 28750.00,
+        pendingTasks: 5,
+        transfers: 3,
+        inventory: 48,
+        saudiEmployees: 8,
+        clients: 24,
+        expenses: 9320.50
+    };
+
+    // بيانات الإيرادات والمصروفات
+    let months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'];
+    let revenueData = [12500, 14800, 16200, 18900, 22300, 19500];
+    let expenseDataMonthly = [4800, 5200, 6100, 7300, 8100, 7700];
+
+    // توزيع النفقات
+    let expenseCategories = ['رواتب', 'صيانة', 'مشتريات', 'خدمات', 'نقل'];
+    let expenseValues = [4200, 1850, 2100, 750, 420];
+
+    // المهام
+    let tasksList = [
+        { id: 1, title: 'تسليم مشروع النظافة العامة', date: '2026-03-25', status: 'قيد التنفيذ' },
+        { id: 2, title: 'صيانة معدات الفريق الميداني', date: '2026-03-24', status: 'مكتملة' },
+        { id: 3, title: 'مقابلة عملاء جدد', date: '2026-03-26', status: 'معلقة' },
+        { id: 4, title: 'تحديث المخزون', date: '2026-03-23', status: 'مكتملة' },
+        { id: 5, title: 'إعداد تقرير الإيرادات الشهري', date: '2026-03-27', status: 'مستعجلة' }
+    ];
+
+    // --------------------------------------------------------------
+    // متغيرات التحكم في التحديث التلقائي
+    // --------------------------------------------------------------
+    let autoUpdateEnabled = true;
+    let countdown = 30;
+    let countdownInterval = null;
+    let updateInterval = null;
+
+    // مراجع الرسوم البيانية
+    let revenueExpenseChartInstance = null;
+    let expenseChartInstance = null;
+
+    // --------------------------------------------------------------
+    // دالة توليد بيانات عشوائية واقعية (محاكاة تحديث البيانات)
+    // --------------------------------------------------------------
+    function generateRandomData() {
+        // تحديث الأرقام الرئيسية بشكل عشوائي ولكن واقعي
+        dashboardData.totalWorkers = Math.floor(10 + Math.random() * 15);
+        dashboardData.currentBalance = +(dashboardData.currentBalance + (Math.random() - 0.5) * 800).toFixed(2);
+        dashboardData.currentBalance = Math.max(0, dashboardData.currentBalance);
+        dashboardData.totalSales = +(dashboardData.totalSales + (Math.random() - 0.5) * 1200).toFixed(2);
+        dashboardData.totalSales = Math.max(0, dashboardData.totalSales);
+        dashboardData.pendingTasks = Math.max(0, dashboardData.pendingTasks + Math.floor(Math.random() * 3) - 1);
+        dashboardData.transfers = Math.max(0, dashboardData.transfers + Math.floor(Math.random() * 2) - 0);
+        dashboardData.inventory = Math.max(0, dashboardData.inventory + Math.floor(Math.random() * 7) - 2);
+        dashboardData.saudiEmployees = Math.min(dashboardData.totalWorkers, Math.max(0, dashboardData.saudiEmployees + Math.floor(Math.random() * 3) - 1));
+        dashboardData.clients = Math.max(0, dashboardData.clients + Math.floor(Math.random() * 5) - 1);
+        dashboardData.expenses = +(dashboardData.expenses + (Math.random() - 0.5) * 400).toFixed(2);
+        dashboardData.expenses = Math.max(0, dashboardData.expenses);
+
+        // تحديث بيانات الإيرادات الشهرية
+        for (let i = 0; i < revenueData.length; i++) {
+            let change = (Math.random() - 0.5) * 800;
+            revenueData[i] = Math.max(5000, revenueData[i] + change);
+            revenueData[i] = Math.round(revenueData[i]);
+        }
+
+        // تحديث بيانات المصروفات الشهرية
+        for (let i = 0; i < expenseDataMonthly.length; i++) {
+            let change = (Math.random() - 0.5) * 500;
+            expenseDataMonthly[i] = Math.max(2000, expenseDataMonthly[i] + change);
+            expenseDataMonthly[i] = Math.round(expenseDataMonthly[i]);
+        }
+
+        // تحديث توزيع النفقات
+        for (let i = 0; i < expenseValues.length; i++) {
+            let change = (Math.random() - 0.5) * 300;
+            expenseValues[i] = Math.max(100, expenseValues[i] + change);
+            expenseValues[i] = Math.round(expenseValues[i]);
+        }
+
+        // إضافة مهمة جديدة أحياناً
+        if (Math.random() > 0.7) {
+            const newTasks = [
+                { title: 'مراجعة عقود جديدة', status: 'معلقة' },
+                { title: 'تحديث بيانات الموظفين', status: 'قيد التنفيذ' },
+                { title: 'صيانة دورية للمعدات', status: 'مستعجلة' },
+                { title: 'اجتماع مع الشركاء', status: 'معلقة' }
+            ];
+            const randomTask = newTasks[Math.floor(Math.random() * newTasks.length)];
+            const today = new Date();
+            const dateStr = today.toISOString().split('T')[0];
+            tasksList.unshift({
+                id: Date.now(),
+                title: randomTask.title,
+                date: dateStr,
+                status: randomTask.status
+            });
+            if (tasksList.length > 8) tasksList.pop();
+        }
+    }
+
+    // --------------------------------------------------------------
+    // عرض إشعار مؤقت
+    // --------------------------------------------------------------
+    function showToast(message, isError = false) {
+        const existingToast = document.querySelector('.toast-notification');
+        if (existingToast) existingToast.remove();
+        
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification';
+        toast.style.background = isError ? '#dc2626' : '#10b981';
+        toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${message}`;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(20px)';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // --------------------------------------------------------------
+    // تحديث واجهة المستخدم بالكامل
+    // --------------------------------------------------------------
+    function updateUI() {
+        // تحديث البطاقات مع تأثير وميض
+        renderStatsCards();
+        
+        // تحديث الرسوم البيانية
+        if (revenueExpenseChartInstance) {
+            revenueExpenseChartInstance.data.datasets[0].data = [...revenueData];
+            revenueExpenseChartInstance.data.datasets[1].data = [...expenseDataMonthly];
+            revenueExpenseChartInstance.update();
+        }
+        
+        if (expenseChartInstance) {
+            expenseChartInstance.data.datasets[0].data = [...expenseValues];
+            expenseChartInstance.update();
+        }
+        
+        // تحديث المهام
+        renderTasks();
+    }
+
+    // دالة تحديث كاملة مع تأثيرات
+    function performUpdate(showToastMessage = true) {
+        generateRandomData();
+        updateUI();
+        
+        if (showToastMessage) {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            showToast(`تم تحديث البيانات بنجاح ${timeStr}`);
+        }
+    }
+
+    // --------------------------------------------------------------
+    // دوال عرض البطاقات والمهام
+    // --------------------------------------------------------------
+    function renderStatsCards() {
+        const statsGrid = document.getElementById('statsGrid');
+        const statsMapping = [
+            { label: 'إجمالي العمال', key: 'totalWorkers', icon: 'fas fa-users' },
+            { label: 'الرصيد الحالي', key: 'currentBalance', icon: 'fas fa-wallet', isCurrency: true },
+            { label: 'إجمالي المبيعات', key: 'totalSales', icon: 'fas fa-chart-simple', isCurrency: true },
+            { label: 'المهام المعلقة', key: 'pendingTasks', icon: 'fas fa-clock' },
+            { label: 'الحوالات', key: 'transfers', icon: 'fas fa-exchange-alt' },
+            { label: 'المخزون', key: 'inventory', icon: 'fas fa-boxes' },
+            { label: 'الموظفون السعوديون', key: 'saudiEmployees', icon: 'fas fa-user-check' },
+            { label: 'العملاء', key: 'clients', icon: 'fas fa-user-friends' },
+            { label: 'النفقات', key: 'expenses', icon: 'fas fa-chart-line', isCurrency: true }
+        ];
+
+        let html = '';
+        statsMapping.forEach(stat => {
+            let value = dashboardData[stat.key];
+            let displayValue = stat.isCurrency ? value.toLocaleString('ar-SA') + ' ﷼' : value.toLocaleString('ar-SA');
+            
+            html += `
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>${stat.label}</h3>
+                        <div class="stat-number">${displayValue}</div>
+                    </div>
+                    <div class="stat-icon"><i class="${stat.icon}"></i></div>
+                </div>
+            `;
+        });
+        statsGrid.innerHTML = html;
+    }
+
+    function renderTasks() {
+        const container = document.getElementById('tasksListContainer');
+        if (!tasksList.length) {
+            container.innerHTML = '<div class="empty-state">لا توجد مهام مسجلة حالياً</div>';
+            return;
+        }
+        let tasksHtml = '';
+        tasksList.slice(0, 6).forEach(task => {
+            let statusStyle = '';
+            let badgeColor = '#f97316';
+            if (task.status === 'مكتملة') {
+                statusStyle = 'background:#e6f7e6; color:#2e7d32';
+                badgeColor = '#22c55e';
+            } else if (task.status === 'معلقة') {
+                statusStyle = 'background:#fff3e0; color:#ed6c02';
+                badgeColor = '#f97316';
+            } else if (task.status === 'مستعجلة') {
+                statusStyle = 'background:#ffe6e5; color:#d32f2f';
+                badgeColor = '#ef4444';
+            } else if (task.status === 'قيد التنفيذ') {
+                statusStyle = 'background:#e3f2fd; color:#1976d2';
+                badgeColor = '#3b82f6';
+            }
+            
+            tasksHtml += `
+                <div class="task-item">
+                    <div class="task-info">
+                        <div class="task-badge" style="background: ${badgeColor}"></div>
+                        <div>
+                            <div class="task-title">${task.title}</div>
+                            <div class="task-date">${task.date}</div>
+                        </div>
+                    </div>
+                    <div class="task-status" style="${statusStyle}">${task.status}</div>
+                </div>
+            `;
+        });
+        container.innerHTML = tasksHtml;
+    }
+
+    // --------------------------------------------------------------
+    // دوال التحكم في التحديث التلقائي
+    // --------------------------------------------------------------
+    function startAutoUpdate() {
+        if (updateInterval) clearInterval(updateInterval);
+        if (countdownInterval) clearInterval(countdownInterval);
+        
+        autoUpdateEnabled = true;
+        countdown = 30;
+        updateCountdownDisplay();
+        
+        // تحديث كل 30 ثانية
+        updateInterval = setInterval(() => {
+            if (autoUpdateEnabled) {
+                performUpdate(true);
+                countdown = 30;
+                updateCountdownDisplay();
+            }
+        }, 30000);
+        
+        // تحديث العداد التنازلي كل ثانية
+        countdownInterval = setInterval(() => {
+            if (autoUpdateEnabled && countdown > 0) {
+                countdown--;
+                updateCountdownDisplay();
+            }
+        }, 1000);
+        
+        updateAutoUpdateButtonUI();
+    }
+    
+    function stopAutoUpdate() {
+        autoUpdateEnabled = false;
+        if (updateInterval) clearInterval(updateInterval);
+        if (countdownInterval) clearInterval(countdownInterval);
+        updateInterval = null;
+        countdownInterval = null;
+        updateAutoUpdateButtonUI();
+        showToast('تم إيقاف التحديث التلقائي', false);
+    }
+    
+    function toggleAutoUpdate() {
+        if (autoUpdateEnabled) {
+            stopAutoUpdate();
+        } else {
+            startAutoUpdate();
+            showToast('تم تشغيل التحديث التلقائي - سيتم التحديث كل 30 ثانية', false);
+        }
+    }
+    
+    function updateCountdownDisplay() {
+        const countdownElement = document.getElementById('countdownTimer');
+        if (countdownElement) {
+            countdownElement.textContent = countdown;
+        }
+        const icon = document.getElementById('autoUpdateIcon');
+        if (icon && autoUpdateEnabled) {
+            icon.style.animation = 'none';
+            icon.offsetHeight;
+            icon.style.animation = 'spin 1s linear infinite';
+        } else if (icon) {
+            icon.style.animation = 'none';
+        }
+    }
+    
+    function updateAutoUpdateButtonUI() {
+        const btnIcon = document.getElementById('autoUpdateBtnIcon');
+        const btnText = document.getElementById('autoUpdateBtnText');
+        if (autoUpdateEnabled) {
+            btnIcon.className = 'fas fa-pause';
+            btnText.textContent = 'إيقاف التحديث التلقائي';
+        } else {
+            btnIcon.className = 'fas fa-play';
+            btnText.textContent = 'تشغيل التحديث التلقائي';
+        }
+    }
+    
+    function manualUpdate() {
+        if (!autoUpdateEnabled) {
+            performUpdate(true);
+            showToast('تم التحديث اليدوي بنجاح', false);
+        } else {
+            performUpdate(true);
+            countdown = 30;
+            updateCountdownDisplay();
+            showToast('تم التحديث اليدوي - تم إعادة ضبط العداد', false);
+        }
+    }
+    
+    // --------------------------------------------------------------
+    // التاريخ وإعدادات إضافية
+    // --------------------------------------------------------------
+    function setCurrentDate() {
+        const now = new Date();
+        const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+        const formattedDate = now.toLocaleDateString('ar-SA', options);
+        document.getElementById('currentDate').innerHTML = `<i class="far fa-calendar-alt"></i> ${formattedDate}`;
+    }
+    
+    function initCharts() {
+        const ctx1 = document.getElementById('revenueExpenseChart').getContext('2d');
+        revenueExpenseChartInstance = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [
+                    { label: 'الإيرادات (﷼)', data: [...revenueData], borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.05)', borderWidth: 3, tension: 0.3, fill: true },
+                    { label: 'المصروفات (﷼)', data: [...expenseDataMonthly], borderColor: '#f97316', backgroundColor: 'rgba(249,115,22,0.05)', borderWidth: 3, tension: 0.3, fill: true }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: true, plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toLocaleString()} ﷼` } } } }
+        });
+        
+        const ctx2 = document.getElementById('expenseDistributionChart').getContext('2d');
+        expenseChartInstance = new Chart(ctx2, {
+            type: 'pie',
+            data: { labels: expenseCategories, datasets: [{ data: [...expenseValues], backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'], borderWidth: 0 }] },
+            options: { responsive: true, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw.toLocaleString()} ﷼` } } } }
+        });
+    }
+    
+    // إضافة حركة دوران للأيقونة
+    const style = document.createElement('style');
+    style.textContent = `@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`;
+    document.head.appendChild(style);
+    
+    // --------------------------------------------------------------
+    // تهيئة الصفحة
+    // --------------------------------------------------------------
+    document.addEventListener('DOMContentLoaded', () => {
+        setCurrentDate();
+        initCharts();
+        renderStatsCards();
+        renderTasks();
+        
+        // أزرار التحكم
+        document.getElementById('manualUpdateBtn').addEventListener('click', manualUpdate);
+        document.getElementById('toggleAutoUpdateBtn').addEventListener('click', toggleAutoUpdate);
+        document.getElementById('openLogBtn').addEventListener('click', () => {
+            showToast('📋 فتح سجل العمليات - يمكنك ربط هذا بصفحة التقارير');
+        });
+        
+        // بدء التحديث التلقائي
+        startAutoUpdate();
+    });
+</script>
+</body>
+</html>
