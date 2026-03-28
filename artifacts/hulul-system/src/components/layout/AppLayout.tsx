@@ -22,7 +22,7 @@ function Layout({ children, title }: { children: ReactNode; title: string }) {
       {/* Main content — shifts right on desktop when sidebar is open */}
       <div
         className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${
-          open ? "lg:mr-64" : "mr-0"
+          open ? "lg:mr-[240px]" : "mr-0"
         }`}
       >
         <Topbar title={title} />

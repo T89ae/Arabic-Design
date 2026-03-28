@@ -222,27 +222,27 @@ export default function Dashboard() {
         {kpis.map((kpi, i) => (
           <div
             key={i}
-            className={`bg-white border border-slate-100 rounded-3xl p-4 flex items-center justify-between shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md ${
-              updating ? "bg-yellow-50 border-yellow-200" : ""
+            className={`bg-white border border-slate-200/80 rounded-lg p-4 flex items-center justify-between shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
+              updating ? "bg-amber-50/60 border-amber-200" : ""
             }`}
           >
             <div>
-              <p className="text-xs font-semibold text-muted-foreground mb-2 leading-tight">{kpi.label}</p>
-              <p className="text-xl font-black text-foreground leading-tight">{kpi.value}</p>
+              <p className="text-[11px] font-semibold text-slate-500 mb-1.5 leading-tight">{kpi.label}</p>
+              <p className="text-[17px] font-black text-[#0A2342] leading-tight">{kpi.value}</p>
             </div>
-            <div className={`w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 ${kpi.bg}`}>
-              <kpi.icon className={`w-5 h-5 ${kpi.color}`} />
+            <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${kpi.bg}`}>
+              <kpi.icon className={`w-4 h-4 ${kpi.color}`} />
             </div>
           </div>
         ))}
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         {/* Bar Chart */}
-        <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm">
-          <h3 className="text-base font-bold text-foreground mb-4 flex items-center gap-2">
-            <span className="text-blue-500">📈</span>
+        <div className="bg-white border border-slate-200/80 rounded-lg p-5 shadow-sm">
+          <h3 className="text-[13px] font-bold text-[#0A2342] mb-4 flex items-center gap-2">
+            <span className="w-1 h-4 bg-blue-500 rounded-full inline-block"></span>
             الإيرادات والمصروفات
           </h3>
           <div className="h-[260px]">
@@ -263,9 +263,9 @@ export default function Dashboard() {
         </div>
 
         {/* Pie Chart */}
-        <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm">
-          <h3 className="text-base font-bold text-foreground mb-4 flex items-center gap-2">
-            <span className="text-emerald-500">🥧</span>
+        <div className="bg-white border border-slate-200/80 rounded-lg p-5 shadow-sm">
+          <h3 className="text-[13px] font-bold text-[#0A2342] mb-4 flex items-center gap-2">
+            <span className="w-1 h-4 bg-[#F9B264] rounded-full inline-block"></span>
             توزيع النفقات
           </h3>
           <div className="h-[260px]">
@@ -300,14 +300,14 @@ export default function Dashboard() {
       </div>
 
       {/* Tasks */}
-      <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm">
-        <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
-          <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-            <CheckSquare className="w-5 h-5 text-blue-500" />
+      <div className="bg-white border border-slate-200/80 rounded-lg p-5 shadow-sm">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+          <h3 className="text-[13px] font-bold text-[#0A2342] flex items-center gap-2">
+            <span className="w-1 h-4 bg-emerald-500 rounded-full inline-block"></span>
             آخر المهام
           </h3>
-          <button className="border border-slate-200 hover:border-slate-400 hover:bg-slate-50 text-foreground text-xs font-semibold px-4 py-1.5 rounded-full transition-all">
-            فتح السجل ←
+          <button className="border border-slate-200 hover:border-[#0A2342] hover:text-[#0A2342] text-slate-500 text-[11px] font-semibold px-3 py-1.5 rounded-lg transition-all">
+            عرض الكل ←
           </button>
         </div>
 
