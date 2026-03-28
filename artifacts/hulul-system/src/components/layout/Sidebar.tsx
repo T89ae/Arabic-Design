@@ -2,51 +2,62 @@ import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/context/SidebarContext";
 import {
-  LayoutDashboard, Users, ArrowRightLeft, CheckSquare, Wallet,
-  LineChart, Settings, LogOut, CalendarCheck, ShoppingCart,
-  CreditCard, Package, Phone, Handshake, UserCheck, Activity,
-  ChevronRight
+  LayoutDashboard,
+  Users,
+  ArrowRightLeft,
+  CheckSquare,
+  Wallet,
+  LineChart,
+  Settings,
+  LogOut,
+  CalendarCheck,
+  ShoppingCart,
+  CreditCard,
+  Package,
+  Phone,
+  Handshake,
+  UserCheck,
+  Activity,
+  ChevronRight,
 } from "lucide-react";
 
 const navGroups = [
   {
     title: "الرئيسية",
-    items: [
-      { name: "لوحة التحكم",       icon: LayoutDashboard, path: "/" },
-    ],
+    items: [{ name: "لوحة التحكم", icon: LayoutDashboard, path: "/" }],
   },
   {
     title: "العمل اليومي",
     items: [
-      { name: "العمال والكفلاء",   icon: Users,           path: "/workers" },
-      { name: "الحوالات",          icon: ArrowRightLeft,  path: "/transfers" },
-      { name: "المهام",            icon: CheckSquare,     path: "/tasks" },
-      { name: "الحضور والغياب",    icon: CalendarCheck,   path: "/attendance" },
-      { name: "العمال السعوديون",  icon: UserCheck,       path: "/saudi-workers" },
+      { name: "العمال والكفلاء", icon: Users, path: "/workers" },
+      { name: "الحوالات", icon: ArrowRightLeft, path: "/transfers" },
+      { name: "المهام", icon: CheckSquare, path: "/tasks" },
+      { name: "الحضور والغياب", icon: CalendarCheck, path: "/attendance" },
+      { name: "العمال السعوديون", icon: UserCheck, path: "/saudi-workers" },
     ],
   },
   {
     title: "المالية",
     items: [
-      { name: "المحاسبة والمالية", icon: Wallet,          path: "/finance" },
-      { name: "المبيعات",          icon: ShoppingCart,    path: "/sales" },
-      { name: "المصروفات",         icon: CreditCard,      path: "/expenses" },
+      { name: "المحاسبة والمالية", icon: Wallet, path: "/finance" },
+      { name: "المبيعات", icon: ShoppingCart, path: "/sales" },
+      { name: "المصروفات", icon: CreditCard, path: "/expenses" },
     ],
   },
   {
     title: "الإدارة",
     items: [
-      { name: "الجرد والمخزون",    icon: Package,         path: "/inventory" },
-      { name: "جهات الاتصال",      icon: Phone,           path: "/contacts" },
-      { name: "الوسطاء",           icon: Handshake,       path: "/brokers" },
+      { name: "الجرد والمخزون", icon: Package, path: "/inventory" },
+      { name: "جهات الاتصال", icon: Phone, path: "/contacts" },
+      { name: "الوسطاء", icon: Handshake, path: "/brokers" },
     ],
   },
   {
     title: "أخرى",
     items: [
-      { name: "التقارير",          icon: LineChart,       path: "/reports" },
-      { name: "سجل النشاطات",      icon: Activity,        path: "/activity" },
-      { name: "الإعدادات",         icon: Settings,        path: "/settings" },
+      { name: "التقارير", icon: LineChart, path: "/reports" },
+      { name: "سجل النشاطات", icon: Activity, path: "/activity" },
+      { name: "الإعدادات", icon: Settings, path: "/settings" },
     ],
   },
 ];
@@ -59,7 +70,7 @@ export function Sidebar() {
     <aside
       className={cn(
         "fixed right-0 top-0 h-full w-64 bg-sidebar text-sidebar-foreground flex flex-col z-40 shadow-2xl shadow-primary/10 transition-transform duration-300",
-        open ? "translate-x-0" : "translate-x-full"
+        open ? "translate-x-0" : "translate-x-full",
       )}
     >
       {/* Logo row */}
@@ -69,8 +80,12 @@ export function Sidebar() {
             ح
           </div>
           <div>
-            <h1 className="font-bold text-base leading-tight tracking-tight">نظام حلول</h1>
-            <p className="text-[10px] text-sidebar-foreground/50 font-medium">للخدمات العامة</p>
+            <h1 className="font-bold text-base leading-tight tracking-tight">
+              نظام حلول
+            </h1>
+            <p className="text-[10px] text-sidebar-foreground/50 font-medium">
+              للخدمات العامة
+            </p>
           </div>
         </div>
 
@@ -98,18 +113,24 @@ export function Sidebar() {
                   <li key={item.path}>
                     <Link
                       href={item.path}
-                      onClick={() => { if (window.innerWidth < 1024) close(); }}
+                      onClick={() => {
+                        if (window.innerWidth < 1024) close();
+                      }}
                       className={cn(
                         "flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-150 group",
                         isActive
                           ? "bg-accent/15 text-accent border border-accent/20 shadow-sm"
-                          : "text-sidebar-foreground/70 hover:bg-white/5 hover:text-white"
+                          : "text-sidebar-foreground/70 hover:bg-white/5 hover:text-white",
                       )}
                     >
-                      <item.icon className={cn(
-                        "w-4 h-4 flex-shrink-0 transition-colors",
-                        isActive ? "text-accent" : "text-sidebar-foreground/40 group-hover:text-white"
-                      )} />
+                      <item.icon
+                        className={cn(
+                          "w-4 h-4 flex-shrink-0 transition-colors",
+                          isActive
+                            ? "text-accent"
+                            : "text-sidebar-foreground/40 group-hover:text-white",
+                        )}
+                      />
                       <span className="truncate">{item.name}</span>
                     </Link>
                   </li>
