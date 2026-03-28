@@ -76,9 +76,11 @@ export function Sidebar() {
       {/* Logo row */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-sidebar-accent/30 bg-sidebar-accent/10 flex-shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center text-primary font-bold text-xl shadow-inner shadow-white/20 flex-shrink-0">
-            ح
-          </div>
+          <img
+            src="/logo.png"
+            alt="حلول"
+            className="w-10 h-10 object-contain flex-shrink-0 drop-shadow-md"
+          />
           <div>
             <h1 className="font-bold text-base leading-tight tracking-tight">
               نظام حلول
