@@ -3,13 +3,14 @@ import { Plus } from "lucide-react";
 import { clsx } from "clsx";
 
 // ── PageHeader ─────────────────────────────────────────────
-export function PageHeader({ title, onAdd, addLabel = "إضافة جديد" }: {
-  title: string; onAdd?: () => void; addLabel?: string;
+export function PageHeader({ title, subtitle, onAdd, addLabel = "إضافة جديد" }: {
+  title: string; subtitle?: string; onAdd?: () => void; addLabel?: string;
 }) {
   return (
     <div className="flex items-center justify-between flex-wrap gap-3 mb-5">
       <div>
         <h2 className="text-[17px] font-bold text-[#0A2342] leading-none">{title}</h2>
+        {subtitle && <p className="text-[12px] text-slate-500 mt-1">{subtitle}</p>}
         <div className="h-[2px] w-8 bg-[#F9B264] rounded-full mt-1.5" />
       </div>
       {onAdd && (

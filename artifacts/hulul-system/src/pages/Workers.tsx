@@ -59,7 +59,9 @@ export default function Workers() {
                   <TableCell dir="ltr" className="text-right">{worker.phone}</TableCell>
                   <TableCell>{worker.iqamaExpiry}</TableCell>
                   <TableCell>
-                    <Badge variant={worker.status === 'active' ? 'success' : 'destructive'}>
+                    <Badge className={worker.status === 'active'
+                      ? 'bg-emerald-100 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
+                      : 'bg-slate-100 text-slate-500 border border-slate-200 hover:bg-slate-100'}>
                       {worker.status === 'active' ? 'نشط' : 'غير نشط'}
                     </Badge>
                   </TableCell>
@@ -109,6 +111,7 @@ function AddWorkerDialog() {
       iqamaExpiry: formData.get('iqamaExpiry') as string,
       passportExpiry: formData.get('passportExpiry') as string || '',
       notes: '',
+      createdAt: new Date().toISOString(),
     }, {
       onSuccess: () => setOpen(false)
     });
