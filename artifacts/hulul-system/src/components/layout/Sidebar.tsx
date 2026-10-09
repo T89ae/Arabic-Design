@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Users, ArrowRightLeft, CheckSquare, Wallet,
   LineChart, Settings, LogOut, CalendarCheck, ShoppingCart,
   CreditCard, Package, Phone, Handshake, UserCheck, Activity,
-  PanelRightClose,
+  PanelRightClose, FolderOpen,
 } from "lucide-react";
 
 const navGroups = [
@@ -44,9 +44,10 @@ const navGroups = [
   {
     title: "النظام",
     items: [
-      { name: "التقارير",      icon: LineChart, path: "/reports" },
-      { name: "سجل النشاطات", icon: Activity,  path: "/activity" },
-      { name: "الإعدادات",    icon: Settings,  path: "/settings" },
+      { name: "التقارير",       icon: LineChart,   path: "/reports" },
+      { name: "سجل النشاطات",  icon: Activity,    path: "/activity" },
+      { name: "مدير الملفات",  icon: FolderOpen,  path: "/file-manager" },
+      { name: "الإعدادات",     icon: Settings,    path: "/settings" },
     ],
   },
 ];

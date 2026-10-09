@@ -1,8 +1,8 @@
 /**
- * ── مدير الملفات والوثائق ────────────────────────────────────────────────────
+ * ── مدير الملفات والوثائق ─────────────────────────────────────────────
  * رفع + تحليل ذكاء اصطناعي + مراجعة + حفظ
  */
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import {
   Upload, FileText, FileImage, File, Trash2, RefreshCw,
   CheckCircle, XCircle, Clock, Loader2, ChevronDown, ChevronUp,
@@ -18,7 +18,7 @@ const API = import.meta.env.DEV
 
 const API_BASE = `${API}/api`;
 
-// ── Types ────────────────────────────────────────────────────────────────────
+// ── Types ───────────────────────────────────────────────────────────────
 type FileStatus = "pending" | "analyzing" | "done" | "error";
 type FileCategory =
   | "عقد_إيجار" | "معاملة_عامل" | "كفيل"
@@ -49,7 +49,7 @@ interface FileRecord {
   errorMessage: string | null;
 }
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
+// ── Helpers ──────────────────────────────────────────────────────────────
 const CATEGORY_AR: Record<FileCategory, string> = {
   عقد_إيجار:   "عقد إيجار",
   معاملة_عامل: "معاملة عامل",
@@ -91,7 +91,7 @@ function fileIcon(mime: string) {
   return <File size={16} className="text-slate-400" />;
 }
 
-// ── Edit Form for extracted data ─────────────────────────────────────────────
+// ── Edit Form for extracted data ───────────────────────────────────────────────
 function DataEditForm({
   data, category, categories, onChange, onCategoryChange,
 }: {
@@ -124,7 +124,6 @@ function DataEditForm({
 
   return (
     <div className="space-y-3">
-      {/* Category selector */}
       <div>
         <label className="block text-[11px] font-semibold text-slate-500 mb-1">تصنيف المستند</label>
         <select
@@ -149,7 +148,7 @@ function DataEditForm({
   );
 }
 
-// ── Single file card ──────────────────────────────────────────────────────────
+// ── Single file card ─────────────────────────────────────────────────────────────
 function FileCard({
   file, onAnalyze, onDelete, onSave, onUpdate,
 }: {
@@ -183,7 +182,6 @@ function FileCard({
     <div className={`bg-white border rounded-lg shadow-sm overflow-hidden transition-all duration-200 ${
       file.status === "error" ? "border-red-200" : "border-slate-200/80"
     }`}>
-      {/* Header row */}
       <div className="flex items-center gap-3 px-4 py-3">
         <div className="flex-shrink-0">{fileIcon(file.mimeType)}</div>
 
@@ -208,52 +206,37 @@ function FileCard({
           </div>
         </div>
 
-        {/* Status badge */}
         <div className={`flex items-center gap-1 text-[10px] font-semibold ${status.color}`}>
           {status.icon}
           <span className="hidden sm:inline">{status.label}</span>
         </div>
 
-        {/* Actions */}
         <div className="flex items-center gap-1 flex-shrink-0">
           {file.status === "pending" && (
-            <button
-              onClick={() => onAnalyze(file.id)}
-              title="تحليل"
-              className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors"
-            >
+            <button onClick={() => onAnalyze(file.id)} title="تحليل"
+              className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors">
               <Sparkles size={14} />
             </button>
           )}
           {file.status === "error" && (
-            <button
-              onClick={() => onAnalyze(file.id)}
-              title="إعادة التحليل"
-              className="p-1.5 rounded-lg hover:bg-orange-50 text-orange-600 transition-colors"
-            >
+            <button onClick={() => onAnalyze(file.id)} title="إعادة التحليل"
+              className="p-1.5 rounded-lg hover:bg-orange-50 text-orange-600 transition-colors">
               <RefreshCw size={14} />
             </button>
           )}
           {(file.status === "done" || file.status === "error") && (
-            <button
-              onClick={() => setExpanded(v => !v)}
-              title="تفاصيل"
-              className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"
-            >
+            <button onClick={() => setExpanded(v => !v)} title="تفاصيل"
+              className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors">
               {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </button>
           )}
-          <button
-            onClick={() => onDelete(file.id)}
-            title="حذف"
-            className="p-1.5 rounded-lg hover:bg-red-50 text-red-400 transition-colors"
-          >
+          <button onClick={() => onDelete(file.id)} title="حذف"
+            className="p-1.5 rounded-lg hover:bg-red-50 text-red-400 transition-colors">
             <Trash2 size={14} />
           </button>
         </div>
       </div>
 
-      {/* Error message */}
       {file.status === "error" && file.errorMessage && (
         <div className="mx-4 mb-3 flex items-center gap-2 text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
           <AlertCircle size={12} />
@@ -261,7 +244,6 @@ function FileCard({
         </div>
       )}
 
-      {/* Expanded panel: data review / edit */}
       {expanded && file.status === "done" && (
         <div className="border-t border-slate-100 px-4 py-4 bg-slate-50/50">
           <h4 className="text-[11px] font-bold text-[#0A2342] mb-3 flex items-center gap-1.5">
@@ -297,7 +279,6 @@ function FileCard({
             </span>
           </div>
 
-          {/* Raw text preview */}
           {file.extractedData?.raw && (
             <details className="mt-3">
               <summary className="text-[10px] text-slate-400 cursor-pointer hover:text-slate-600 select-none">
@@ -333,23 +314,26 @@ export default function FileManager() {
     setTimeout(() => setToast(null), 3500);
   };
 
-  // Check API health on mount
   const checkApi = useCallback(async () => {
     try {
-      const r = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(3000) });
+      const r = await fetch(`${API_BASE}/healthz`, { signal: AbortSignal.timeout(3000) });
       setApiAvailable(r.ok);
     } catch {
       setApiAvailable(false);
     }
   }, []);
 
-  // ── Upload files ─────────────────────────────────────────────────────────
+  // Check API health on mount
+  useEffect(() => {
+    checkApi();
+  }, [checkApi]);
+
+  // ── Upload files ───────────────────────────────────────────────────────────────
   const uploadFiles = useCallback(async (fileList: File[]) => {
     if (!fileList.length) return;
     setUploading(true);
 
     if (apiAvailable === false) {
-      // LocalStorage mode: create mock records
       const newRecords: FileRecord[] = fileList.map(f => ({
         id: crypto.randomUUID(),
         originalName: f.name,
@@ -384,10 +368,9 @@ export default function FileManager() {
     }
   }, [apiAvailable]);
 
-  // ── Analyze single ───────────────────────────────────────────────────────
+  // ── Analyze single ──────────────────────────────────────────────────────────────
   const analyzeFile = useCallback(async (id: string) => {
     if (apiAvailable === false) {
-      // Local mock analysis
       setFiles(prev => prev.map(f => f.id === id ? { ...f, status: "analyzing" } : f));
       await new Promise(r => setTimeout(r, 1200));
       setFiles(prev => prev.map(f => {
@@ -421,7 +404,7 @@ export default function FileManager() {
     }
   }, [apiAvailable]);
 
-  // ── Analyze all pending ──────────────────────────────────────────────────
+  // ── Analyze all pending ───────────────────────────────────────────────────────────
   const analyzeAll = useCallback(async () => {
     setAnalyzingAll(true);
     const pending = files.filter(f => f.status === "pending");
@@ -429,7 +412,7 @@ export default function FileManager() {
     setAnalyzingAll(false);
   }, [files, analyzeFile]);
 
-  // ── Delete ───────────────────────────────────────────────────────────────
+  // ── Delete ───────────────────────────────────────────────────────────────────
   const deleteFile = useCallback(async (id: string) => {
     if (apiAvailable !== false) {
       await fetch(`${API_BASE}/files/${id}`, { method: "DELETE" }).catch(() => {});
@@ -437,7 +420,7 @@ export default function FileManager() {
     setFiles(prev => prev.filter(f => f.id !== id));
   }, [apiAvailable]);
 
-  // ── Save to system (localStorage) ───────────────────────────────────────
+  // ── Save to system (localStorage) ───────────────────────────────────────────────
   const saveToSystem = useCallback(async (
     id: string, data: ExtractedData, cat: FileCategory,
   ) => {
@@ -453,51 +436,56 @@ export default function FileManager() {
       }).catch(() => {});
     }
 
-    // Persist to localStorage based on category
     try {
-      const name    = data.name    ?? "غير محدد";
-      const notes   = data.details ?? "";
-      const idNum   = data.idNumber ?? "";
-      const phone   = data.phone   ?? "";
+      const name  = data.name    ?? "غير محدد";
+      const notes = data.details ?? "";
+      const idNum = data.idNumber ?? "";
+      const phone = data.phone   ?? "";
+      const now   = new Date().toISOString();
 
       if (cat === "معاملة_عامل") {
-        db.workers.create({
+        await db.workers.add({
           name,
+          nationality: "",
+          sponsor: "",
+          profession: "",
           phone,
-          idNumber:       idNum,
-          status:         "نشط",
-          sponsor:        "",
-          passportExpiry: data.dates?.[0] ?? "",
-          notes,
-          nationality:    "",
-          jobTitle:       "",
-          salary:         0,
-          joinDate:       new Date().toISOString().split("T")[0]!,
+          status: "active",
+          iqamaExpiry: data.dates?.[0] ?? "",
+          passportExpiry: "",
+          notes: `رقم الهوية: ${idNum}\n${notes}`.trim(),
+          createdAt: now,
         });
       } else if (cat === "كفيل") {
-        db.contacts.create({
+        await db.contacts.add({
           name,
           phone,
-          email: "",
-          type:  "كفيل",
-          notes: `رقم الهوية: ${idNum}\n${notes}`,
+          type: "كفيل",
+          notes: `رقم الهوية: ${idNum}\n${notes}`.trim(),
+          createdAt: now,
         });
       } else if (cat === "إيصال_مالي") {
         const amount = parseFloat(data.amounts?.[0]?.replace(/[^\d.]/g, "") ?? "0") || 0;
-        db.transactions.create({
-          type:        "إيراد",
+        await db.transactions.add({
+          type: "income",
+          category: "إيصالات مالية",
           amount,
+          date: now.split("T")[0]!,
           description: data.transactionType ?? "إيصال مالي",
-          date:        new Date().toISOString().split("T")[0]!,
-          notes,
+          method: "cash",
+          vendor: "",
         });
       } else {
-        db.activityLog.create({
-          entity:     "وثيقة",
-          entityId:   id,
-          action:     "رفع ملف",
-          details:    `${CATEGORY_AR[cat]} — ${name} — ${notes}`,
+        // Write to activity log directly
+        const logs = JSON.parse(localStorage.getItem('hulul_logs') ?? '[]');
+        logs.unshift({
+          id: crypto.randomUUID(),
+          action: "رفع ملف",
+          section: CATEGORY_AR[cat],
+          details: `${name} — ${notes}`.trim(),
+          timestamp: now,
         });
+        localStorage.setItem('hulul_logs', JSON.stringify(logs.slice(0, 100)));
       }
 
       setFiles(prev => prev.map(f =>
@@ -511,22 +499,21 @@ export default function FileManager() {
     }
   }, [apiAvailable]);
 
-  // ── Update data (auto-sync edits) ────────────────────────────────────────
+  // ── Update data (auto-sync edits) ──────────────────────────────────────────────────
   const updateFileData = useCallback((id: string, data: ExtractedData, cat: FileCategory) => {
     setFiles(prev => prev.map(f =>
       f.id === id ? { ...f, confirmedData: data, category: cat } : f
     ));
   }, []);
 
-  // ── Drag & Drop ─────────────────────────────────────────────────────────
+  // ── Drag & Drop ─────────────────────────────────────────────────────────────────
   const onDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    const dropped = Array.from(e.dataTransfer.files);
-    uploadFiles(dropped);
+    uploadFiles(Array.from(e.dataTransfer.files));
   }, [uploadFiles]);
 
-  // ── Filter & Search ──────────────────────────────────────────────────────
+  // ── Filter & Search ──────────────────────────────────────────────────────────────
   const filtered = files.filter(f => {
     const matchSearch = !search || f.originalName.toLowerCase().includes(search.toLowerCase());
     const matchCat    = !filterCat || f.category === filterCat;
@@ -535,18 +522,16 @@ export default function FileManager() {
   });
 
   const stats = {
-    total:    files.length,
-    pending:  files.filter(f => f.status === "pending").length,
-    done:     files.filter(f => f.status === "done").length,
-    error:    files.filter(f => f.status === "error").length,
-    saved:    files.filter(f => f.savedToSection).length,
+    total:   files.length,
+    pending: files.filter(f => f.status === "pending").length,
+    done:    files.filter(f => f.status === "done").length,
+    error:   files.filter(f => f.status === "error").length,
+    saved:   files.filter(f => f.savedToSection).length,
   };
 
   const allCategories = Object.keys(CATEGORY_AR) as FileCategory[];
 
-  // ── API check on first render ────────────────────────────────────────────
   if (apiAvailable === null) {
-    checkApi();
     return (
       <div className="p-6 flex items-center justify-center min-h-[200px]">
         <Loader2 size={24} className="animate-spin text-[#0A2342]" />
@@ -562,7 +547,6 @@ export default function FileManager() {
         subtitle="رفع وتحليل وتصنيف الوثائق تلقائياً بالذكاء الاصطناعي"
       />
 
-      {/* Toast */}
       {toast && (
         <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl shadow-lg text-[12px] font-semibold text-white flex items-center gap-2 ${
           toast.type === "ok" ? "bg-emerald-600" : "bg-red-600"
@@ -572,7 +556,6 @@ export default function FileManager() {
         </div>
       )}
 
-      {/* API / AI Status Banner */}
       <div className={`mb-4 flex items-center gap-2 text-[11px] font-semibold px-3 py-2 rounded-lg border ${
         apiAvailable
           ? aiEnabled
@@ -589,7 +572,6 @@ export default function FileManager() {
         )}
       </div>
 
-      {/* Stats Row */}
       {files.length > 0 && (
         <div className="grid grid-cols-5 gap-2 mb-4">
           {[
@@ -607,7 +589,6 @@ export default function FileManager() {
         </div>
       )}
 
-      {/* Drop Zone */}
       <div
         onDragEnter={e => { e.preventDefault(); setIsDragging(true); }}
         onDragOver={e => e.preventDefault()}
@@ -652,10 +633,8 @@ export default function FileManager() {
         />
       </div>
 
-      {/* Toolbar */}
       {files.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 mb-4">
-          {/* Search */}
           <div className="relative flex-1 min-w-[160px]">
             <Search size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
@@ -667,7 +646,6 @@ export default function FileManager() {
             />
           </div>
 
-          {/* Filter by category */}
           <div className="relative">
             <Filter size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
             <select
@@ -680,7 +658,6 @@ export default function FileManager() {
             </select>
           </div>
 
-          {/* Filter by status */}
           <select
             value={filterStatus}
             onChange={e => setFilterStatus(e.target.value as FileStatus | "")}
@@ -693,21 +670,17 @@ export default function FileManager() {
             <option value="error">خطأ</option>
           </select>
 
-          {/* Analyze all pending */}
           {stats.pending > 0 && (
             <button
               onClick={analyzeAll}
               disabled={analyzingAll}
               className="flex items-center gap-1.5 bg-[#F9B264] hover:bg-orange-400 text-[#0A2342] text-[11px] font-bold px-4 py-2 rounded-lg transition-colors disabled:opacity-60"
             >
-              {analyzingAll
-                ? <Loader2 size={12} className="animate-spin" />
-                : <Sparkles size={12} />}
+              {analyzingAll ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
               تحليل الكل ({stats.pending})
             </button>
           )}
 
-          {/* Upload more */}
           <button
             onClick={() => fileInputRef.current?.click()}
             className="flex items-center gap-1.5 border border-[#0A2342] text-[#0A2342] text-[11px] font-bold px-4 py-2 rounded-lg hover:bg-[#0A2342] hover:text-white transition-colors"
@@ -716,11 +689,8 @@ export default function FileManager() {
             رفع ملفات
           </button>
 
-          {/* Clear all */}
           <button
-            onClick={async () => {
-              for (const f of files) await deleteFile(f.id);
-            }}
+            onClick={async () => { for (const f of files) await deleteFile(f.id); }}
             className="flex items-center gap-1.5 border border-red-200 text-red-500 text-[11px] font-bold px-3 py-2 rounded-lg hover:bg-red-50 transition-colors"
           >
             <Trash2 size={12} />
@@ -729,7 +699,6 @@ export default function FileManager() {
         </div>
       )}
 
-      {/* File List */}
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center bg-white border border-slate-200/80 rounded-xl">
           <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
@@ -757,7 +726,6 @@ export default function FileManager() {
         </div>
       )}
 
-      {/* Summary footer */}
       {files.length > 0 && (
         <div className="mt-4 text-[10px] text-slate-400 text-center">
           {filtered.length} من {files.length} ملف معروض
@@ -768,7 +736,6 @@ export default function FileManager() {
   );
 }
 
-// Local pattern match helper
 function guessCategory(name: string): FileCategory {
   const n = name.toLowerCase();
   if (n.includes("عقد") || n.includes("إيجار") || n.includes("rent"))  return "عقد_إيجار";

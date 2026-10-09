@@ -17,6 +17,7 @@ import Brokers       from "@/pages/Brokers";
 import Attendance    from "@/pages/Attendance";
 import SaudiWorkers  from "@/pages/SaudiWorkers";
 import ActivityLog   from "@/pages/ActivityLog";
+import FileManager   from "@/pages/FileManager";
 import NotFound      from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -45,7 +46,7 @@ function Router() {
       <Route path="/attendance"    component={Attendance} />
       <Route path="/saudi-workers" component={SaudiWorkers} />
       <Route path="/activity"      component={ActivityLog} />
-      <Route path="/settings"      component={Dashboard} />
+      <Route path="/file-manager"  component={FileManager} />
       <Route component={NotFound} />
     </Switch>
   );
